@@ -3,10 +3,24 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { UserProvider } from './contexts/UserContext';
+import { ApiProvider } from './contexts/ApiContext';
+import {
+  QueryClient,
+  QueryClientProvider,
+} from 'react-query'
+
+const queryClient = new QueryClient()
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <QueryClientProvider client={queryClient}>
+      <UserProvider>
+        <ApiProvider>
+          <App />
+        </ApiProvider>
+      </UserProvider>
+    </QueryClientProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );
