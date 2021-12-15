@@ -1,26 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { UserProvider } from './contexts/UserContext';
-import { ApiProvider } from './contexts/ApiContext';
-import {
-  QueryClient,
-  QueryClientProvider,
-} from 'react-query'
+import { JamProvider } from './jam';
 
-const queryClient = new QueryClient()
+const baseUrl = 'http://localhost:3000'
 
 ReactDOM.render(
   <React.StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <UserProvider>
-        <ApiProvider>
-          <App />
-        </ApiProvider>
-      </UserProvider>
-    </QueryClientProvider>
+    <JamProvider baseUrl={baseUrl}>
+      <App />
+    </JamProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );

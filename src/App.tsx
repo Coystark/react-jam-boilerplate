@@ -1,55 +1,52 @@
-import React, { useEffect } from 'react';
-import logo from './logo.svg';
-import './App.css';
-import { useApi } from './contexts/ApiContext';
+import React from 'react';
 
-import {
-  useQuery,
-  useMutation,
-  useQueryClient,
-  QueryClient,
-  QueryClientProvider,
-} from 'react-query'
-
-import axios from 'axios';
-import { useCreateAnime, useSignIn } from './api/external/mutations';
-import { useGetAnimes } from './api/external/queries';
-
+import { useCreateAnime, useSignIn, useSignOut } from './jam/mutations';
+import { useGetAnimes } from './jam/queries';
+import { useJam } from './jam';
 
 function App() {
-  const api = useApi()
+  const { user } = useJam()
 
-  const createAnime = useCreateAnime(api)
-  const { data, isFetched } = useGetAnimes(api)
-  const signIn = useSignIn(api)
+  const createAnime = useCreateAnime()
+  const { data: animes, isSuccess, isLoading } = useGetAnimes()
+
+  const signIn = useSignIn()
+  const signOut = useSignOut()
 
   const handleSignIn = async () => {
-    signIn.mutateAsync({
+    await signIn.mutateAsync({
       username: 'caio',
       password: '898748'
     })
   }
 
-  const logout = async () => {
-    api.auth().signOut()
+  const handleSignOut = async () => {
+    signOut.mutate()
   }
 
   const handleCreateAnime = async () => {
-    createAnime.mutateAsync({ name: 'Bleach' })
+    await createAnime.mutateAsync({ name: 'Bleach' })
   }
-
 
   return (
     <div>
+      {user && (
+        <div>Olá {user.email}</div>
+      )}
+
+      {isLoading && (
+        <div>Carregando lista...</div>
+      )}
+
       <ul>
-         {isFetched && data.map((anime: any) => (
-           <li key={anime.name}>{anime.name}</li>
+         {isSuccess && animes.map((anime: any, index: any) => (
+           <li key={index}>{anime.name}</li>
          ))}
        </ul>
 
       <button onClick={handleSignIn}>Login</button>
       <button onClick={handleCreateAnime}>Criar anime</button>
-      <button onClick={logout}>Logout</button>
+      <button onClick={handleSignOut}>Logout</button>
     </div>
   );
 }
